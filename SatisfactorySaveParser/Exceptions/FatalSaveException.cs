@@ -1,15 +1,12 @@
-﻿using System;
+﻿namespace SatisfactorySaveParser.Exceptions;
 
-namespace SatisfactorySaveParser.Exceptions
+public class FatalSaveException : Exception
 {
-    public class FatalSaveException : Exception
+    public FatalSaveException()
     {
-        public FatalSaveException()
-        {
-        }
+    }
 
-        public FatalSaveException(string message) : base(message)
-        {
-        }
+    public FatalSaveException(string message) : base(message)
+    {
     }
 }

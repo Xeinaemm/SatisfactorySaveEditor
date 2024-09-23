@@ -1,31 +1,23 @@
-﻿using SatisfactorySaveParser.PropertyTypes;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SatisfactorySaveParser.PropertyTypes;
 
-namespace SatisfactorySaveEditor.ViewModel.Property
+namespace SatisfactorySaveEditor.ViewModel.Property;
+
+public partial class BoolPropertyViewModel : SerializedPropertyViewModel
 {
-    public class BoolPropertyViewModel : SerializedPropertyViewModel
+    private readonly BoolProperty model;
+
+    [ObservableProperty]
+    private bool value;
+
+    public override string ShortName => "Boolean";
+
+    public BoolPropertyViewModel(BoolProperty boolProperty) : base(boolProperty)
     {
-        private readonly BoolProperty model;
+        model = boolProperty;
 
-        private bool value;
-
-        public bool Value
-        {
-            get => value;
-            set { Set(() => Value, ref this.value, value); }
-        }
-
-        public override string ShortName => "Boolean";
-
-        public BoolPropertyViewModel(BoolProperty boolProperty) : base(boolProperty)
-        {
-            model = boolProperty;
-
-            value = model.Value;
-        }
-
-        public override void ApplyChanges()
-        {
-            model.Value = value;
-        }
+        value = model.Value;
     }
+
+    public override void ApplyChanges() => model.Value = Value;
 }

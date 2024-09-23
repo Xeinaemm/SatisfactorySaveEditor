@@ -1,12 +1,9 @@
-﻿using System.IO;
+﻿namespace SatisfactorySaveParser.PropertyTypes.Structs;
 
-namespace SatisfactorySaveParser.PropertyTypes.Structs
+public interface IStructData
 {
-    public interface IStructData
-    {
-        int SerializedLength { get; }
-        string Type { get; }
+    int SerializedLength { get; }
+    string Type { get; }
 
-        void Serialize(BinaryWriter writer, int buildVersion);
-    }
+    void Serialize(BinaryWriter writer, int buildVersion);
 }

@@ -1,9 +1,8 @@
-﻿namespace SatisfactorySaveParser.Save
+﻿namespace SatisfactorySaveParser.Save;
+
+public enum ESessionVisibility
 {
-    public enum ESessionVisibility
-    {
-        SV_Private = 0,
-        SV_FriendsOnly = 1,
-        SV_Invalid = 2,
-    }
+    SV_Private = 0,
+    SV_FriendsOnly = 1,
+    SV_Invalid = 2,
 }

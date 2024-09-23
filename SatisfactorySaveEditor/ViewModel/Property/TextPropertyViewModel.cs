@@ -1,48 +1,43 @@
-﻿using SatisfactorySaveParser.PropertyTypes;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SatisfactorySaveParser.PropertyTypes;
 using SatisfactorySaveParser.Save;
 
-namespace SatisfactorySaveEditor.ViewModel.Property
+namespace SatisfactorySaveEditor.ViewModel.Property;
+
+public partial class TextPropertyViewModel : SerializedPropertyViewModel
 {
-    public class TextPropertyViewModel : SerializedPropertyViewModel
+    private readonly TextProperty model;
+
+    [ObservableProperty]
+    private string value;
+
+    public override string ShortName => "Text";
+
+    public TextPropertyViewModel(TextProperty textProperty) : base(textProperty)
     {
-        private readonly TextProperty model;
+        model = textProperty;
 
-        private string value;
-
-        public string Value
+        switch (textProperty.Text)
         {
-            get => value;
-            set { Set(() => Value, ref this.value, value); }
+            case BaseTextEntry baseText:
+                value = baseText.Value;
+                break;
+            case NoneTextEntry baseText:
+                value = baseText.CultureInvariantString;
+                break;
         }
+    }
 
-        public override string ShortName => "Text";
-
-        public TextPropertyViewModel(TextProperty textProperty) : base(textProperty)
+    public override void ApplyChanges()
+    {
+        switch (model.Text)
         {
-            model = textProperty;
-
-            switch(textProperty.Text)
-            {
-                case BaseTextEntry baseText:
-                    value = baseText.Value;
-                    break;
-                case NoneTextEntry baseText:
-                    value = baseText.CultureInvariantString;
-                    break;
-            }
-        }
-
-        public override void ApplyChanges()
-        {
-            switch (model.Text)
-            {
-                case BaseTextEntry baseText:
-                    baseText.Value = value;
-                    break;
-                case NoneTextEntry baseText:
-                    baseText.CultureInvariantString = value;
-                    break;
-            }
+            case BaseTextEntry baseText:
+                baseText.Value = Value;
+                break;
+            case NoneTextEntry baseText:
+                baseText.CultureInvariantString = Value;
+                break;
         }
     }
 }

@@ -1,26 +1,18 @@
-﻿using System.Numerics;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using SatisfactorySaveParser.Structures;
+using Vector4 = SatisfactorySaveParser.Structures.Vector4;
 
-namespace SatisfactorySaveEditor.View.Control
+namespace SatisfactorySaveEditor.View.Control;
+public partial class Vector4Control : UserControl
 {
-    /// <summary>
-    /// Interakční logika pro Vector4Control.xaml
-    /// </summary>
-    public partial class Vector4Control : UserControl
+    public Vector4Control() => InitializeComponent();
+
+    public Vector4 Vector
     {
-        public Vector4Control()
-        {
-            InitializeComponent();
-        }
-
-        public Vector4 Vector
-        {
-            get => (Vector4)GetValue(VectorProperty);
-            set => SetValue(VectorProperty, value);
-        }
-
-        public static readonly DependencyProperty VectorProperty = DependencyProperty.Register("Vector", typeof(Vector4), typeof(Vector4Control));
+        get => (Vector4)GetValue(VectorProperty);
+        set => SetValue(VectorProperty, value);
     }
+
+    public static readonly DependencyProperty VectorProperty =
+        DependencyProperty.Register("Vector", typeof(Vector4), typeof(Vector4Control));
 }

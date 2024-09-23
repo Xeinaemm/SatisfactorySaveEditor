@@ -1,15 +1,8 @@
 ﻿using System.Windows;
 
-namespace SatisfactorySaveEditor.View
+namespace SatisfactorySaveEditor.View;
+
+public partial class AddWindow : Window
 {
-    /// <summary>
-    /// Interakční logika pro AddWindow.xaml
-    /// </summary>
-    public partial class AddWindow : Window
-    {
-        public AddWindow()
-        {
-            InitializeComponent();
-        }
-    }
+    public AddWindow() => InitializeComponent();
 }

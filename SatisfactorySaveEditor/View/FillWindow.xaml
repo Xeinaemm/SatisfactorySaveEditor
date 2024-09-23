@@ -3,9 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewmodel="clr-namespace:SatisfactorySaveEditor.ViewModel"
+        d:DataContext="{d:DesignInstance Type=viewmodel:FillViewModel}"
         mc:Ignorable="d"
         Title="Fill Inventory" Height="140" Width="400" ResizeMode="NoResize"
-        DataContext="{Binding FillViewModel, Source={StaticResource Locator}, Mode=OneTime}"
         WindowStartupLocation="CenterOwner"
         x:Name="FillInventoryWindow">
     <DockPanel Margin="5">

@@ -1,40 +1,31 @@
-﻿using SatisfactorySaveParser.PropertyTypes;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SatisfactorySaveParser.PropertyTypes;
 
-namespace SatisfactorySaveEditor.ViewModel.Property
+namespace SatisfactorySaveEditor.ViewModel.Property;
+
+public partial class BytePropertyViewModel : SerializedPropertyViewModel
 {
-    public class BytePropertyViewModel : SerializedPropertyViewModel
+    private readonly ByteProperty model;
+
+    [ObservableProperty]
+    private string type;
+
+    [ObservableProperty]
+    private string value;
+
+    public override string ShortName => "Byte";
+
+    public BytePropertyViewModel(ByteProperty byteProperty) : base(byteProperty)
     {
-        private readonly ByteProperty model;
+        model = byteProperty;
 
-        private string type;
-        private string value;
+        value = model.Value;
+        type = model.Type;
+    }
 
-        public string Value
-        {
-            get => value;
-            set { Set(() => Value, ref this.value, value); }
-        }
-
-        public string Type
-        {
-            get => type;
-            set { Set(() => Type, ref type, value); }
-        }
-
-        public override string ShortName => "Byte";
-
-        public BytePropertyViewModel(ByteProperty byteProperty) : base(byteProperty)
-        {
-            model = byteProperty;
-
-            value = model.Value;
-            type = model.Type;
-        }
-
-        public override void ApplyChanges()
-        {
-            model.Value = value;
-            model.Type = type;
-        }
+    public override void ApplyChanges()
+    {
+        model.Value = Value;
+        model.Type = Type;
     }
 }

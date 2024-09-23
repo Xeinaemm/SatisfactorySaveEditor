@@ -1,95 +1,88 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
+﻿using System.Diagnostics;
 
-namespace SatisfactorySaveParser.PropertyTypes
+namespace SatisfactorySaveParser.PropertyTypes;
+
+public class MapProperty(string propertyName, int index = 0) : SerializedProperty(propertyName, index)
 {
-    public class MapProperty : SerializedProperty
+    public const string TypeName = nameof(MapProperty);
+    public override string PropertyType => TypeName;
+    public override int SerializedLength => Data.Length + 4;
+
+    public string KeyType { get; set; }
+    public string ValueType { get; set; }
+
+    //public Dictionary<int, (string name, string type, ArrayProperty array)> Values { get; set; } = new Dictionary<int, (string, string, ArrayProperty)>();
+    public byte[] Data { get; set; }
+
+    public override void Serialize(BinaryWriter writer, int buildVersion, bool writeHeader = true)
     {
-        public const string TypeName = nameof(MapProperty);
-        public override string PropertyType => TypeName;
-        public override int SerializedLength => Data.Length + 4;
+        base.Serialize(writer, buildVersion);
 
-        public string KeyType { get; set; }
-        public string ValueType { get; set; }
+        writer.Write(SerializedLength);
+        writer.Write(Index);
 
-        //public Dictionary<int, (string name, string type, ArrayProperty array)> Values { get; set; } = new Dictionary<int, (string, string, ArrayProperty)>();
-        public byte[] Data { get; set; }
+        writer.WriteLengthPrefixedString(KeyType);
+        writer.WriteLengthPrefixedString(ValueType);
 
-        public MapProperty(string propertyName, int index = 0) : base(propertyName, index)
+        writer.Write((byte)0);
+        writer.Write(0);
+
+        writer.Write(Data);
+
+        /*
+        writer.Write(Values.Count);
+        foreach(var kv in Values)
         {
-        }
+            writer.Write(kv.Key);
+            writer.WriteLengthPrefixedString(kv.Value.name);
+            writer.WriteLengthPrefixedString(kv.Value.type);
 
-        public override void Serialize(BinaryWriter writer, int buildVersion, bool writeHeader = true)
+            kv.Value.array.Serialize(writer);
+
+            writer.WriteLengthPrefixedString("None");
+        }
+        */
+    }
+
+    public static MapProperty Parse(string propertyName, int index, BinaryReader reader, int size, out int overhead)
+    {
+        var result = new MapProperty(propertyName, index)
         {
-            base.Serialize(writer, buildVersion);
+            KeyType = reader.ReadLengthPrefixedString(),
+            ValueType = reader.ReadLengthPrefixedString()
+        };
 
-            writer.Write(SerializedLength);
-            writer.Write(Index);
+        overhead = result.KeyType.Length + result.ValueType.Length + 11;
 
-            writer.WriteLengthPrefixedString(KeyType);
-            writer.WriteLengthPrefixedString(ValueType);
+        var unk = reader.ReadByte();
+        Trace.Assert(unk == 0);
 
-            writer.Write((byte)0);
-            writer.Write(0);
+        var unk1 = reader.ReadInt32();
+        Trace.Assert(unk1 == 0);
 
-            writer.Write(Data);
+        result.Data = reader.ReadBytes(size - 4);
 
-            /*
-            writer.Write(Values.Count);
-            foreach(var kv in Values)
-            {
-                writer.Write(kv.Key);
-                writer.WriteLengthPrefixedString(kv.Value.name);
-                writer.WriteLengthPrefixedString(kv.Value.type);
-
-                kv.Value.array.Serialize(writer);
-
-                writer.WriteLengthPrefixedString("None");
-            }
-            */
-        }
-
-        public static MapProperty Parse(string propertyName, int index, BinaryReader reader, int size, out int overhead)
+        /*
+        var count = reader.ReadInt32();
+        for (int i = 0; i < count; i++)
         {
-            var result = new MapProperty(propertyName, index)
-            {
-                KeyType = reader.ReadLengthPrefixedString(),
-                ValueType = reader.ReadLengthPrefixedString()
-            };
+            var key = reader.ReadInt32();
+            var name = reader.ReadLengthPrefixedString();
+            var type = reader.ReadLengthPrefixedString();
 
-            overhead = result.KeyType.Length + result.ValueType.Length + 11;
+            var arr_size = reader.ReadInt32();
+            var unk4 = reader.ReadInt32();
+            Trace.Assert(unk4 == 0);
 
-            var unk = reader.ReadByte();
-            Trace.Assert(unk == 0);
+            var parsed = ArrayProperty.Parse(null, reader, arr_size, out int _);
 
-            var unk1 = reader.ReadInt32();
-            Trace.Assert(unk1 == 0);
+            var unk5 = reader.ReadLengthPrefixedString();
+            Trace.Assert(unk5 == "None");
 
-            result.Data = reader.ReadBytes(size - 4);
-
-            /*
-            var count = reader.ReadInt32();
-            for (int i = 0; i < count; i++)
-            {
-                var key = reader.ReadInt32();
-                var name = reader.ReadLengthPrefixedString();
-                var type = reader.ReadLengthPrefixedString();
-
-                var arr_size = reader.ReadInt32();
-                var unk4 = reader.ReadInt32();
-                Trace.Assert(unk4 == 0);
-
-                var parsed = ArrayProperty.Parse(null, reader, arr_size, out int _);
-
-                var unk5 = reader.ReadLengthPrefixedString();
-                Trace.Assert(unk5 == "None");
-
-                result.Values[key] = (name, type, parsed);
-            }
-            */
-
-            return result;
+            result.Values[key] = (name, type, parsed);
         }
+        */
+
+        return result;
     }
 }

@@ -1,40 +1,31 @@
-﻿using SatisfactorySaveParser.PropertyTypes;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SatisfactorySaveParser.PropertyTypes;
 
-namespace SatisfactorySaveEditor.ViewModel.Property
+namespace SatisfactorySaveEditor.ViewModel.Property;
+
+public partial class InterfacePropertyViewModel : SerializedPropertyViewModel
 {
-    public class InterfacePropertyViewModel : SerializedPropertyViewModel
+    private readonly InterfaceProperty model;
+
+    [ObservableProperty]
+    private string str1;
+
+    [ObservableProperty]
+    private string str2;
+
+    public override string ShortName => "Interface";
+
+    public InterfacePropertyViewModel(InterfaceProperty interfaceProperty) : base(interfaceProperty)
     {
-        private readonly InterfaceProperty model;
+        model = interfaceProperty;
 
-        private string str1;
-        private string str2;
+        str1 = model.LevelName;
+        str2 = model.PathName;
+    }
 
-        public string Str1
-        {
-            get => str1;
-            set { Set(() => Str1, ref str1, value); }
-        }
-
-        public string Str2
-        {
-            get => str2;
-            set { Set(() => Str2, ref str2, value); }
-        }
-
-        public override string ShortName => "Interface";
-
-        public InterfacePropertyViewModel(InterfaceProperty interfaceProperty) : base(interfaceProperty)
-        {
-            model = interfaceProperty;
-
-            str1 = model.LevelName;
-            str2 = model.PathName;
-        }
-
-        public override void ApplyChanges()
-        {
-            model.LevelName = str1;
-            model.PathName = str2;
-        }
+    public override void ApplyChanges()
+    {
+        model.LevelName = Str1;
+        model.PathName = Str2;
     }
 }

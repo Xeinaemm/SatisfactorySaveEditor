@@ -1,22 +1,11 @@
-﻿using System.IO;
+﻿namespace SatisfactorySaveParser.PropertyTypes.Structs;
 
-namespace SatisfactorySaveParser.PropertyTypes.Structs
+public class FluidBox(BinaryReader reader) : IStructData
 {
-    public class FluidBox : IStructData
-    {
-        public float Unknown { get; set; }
+    public float Unknown { get; set; } = reader.ReadSingle();
 
-        public int SerializedLength => 4;
-        public string Type => "FluidBox";
+    public int SerializedLength => 4;
+    public string Type => "FluidBox";
 
-        public FluidBox(BinaryReader reader)
-        {
-            Unknown = reader.ReadSingle();
-        }
-
-        public void Serialize(BinaryWriter writer, int buildVersion)
-        {
-            writer.Write(Unknown);
-        }
-    }
+    public void Serialize(BinaryWriter writer, int buildVersion) => writer.Write(Unknown);
 }

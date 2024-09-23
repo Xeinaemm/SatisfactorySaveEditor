@@ -1,82 +1,65 @@
-﻿using System.Windows;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using SatisfactorySaveEditor.Data;
+using System.Windows;
 
-namespace SatisfactorySaveEditor.ViewModel
+namespace SatisfactorySaveEditor.ViewModel;
+
+public partial class PreferencesWindowViewModel : ObservableObject
 {
-    public class PreferencesWindowViewModel : ViewModelBase
+    public PreferencesWindowViewModel(AppSettingsDbContext appSettingsDbContext)
+        => this.appSettingsDbContext = appSettingsDbContext;
+
+    [ObservableProperty]
+    private bool canApply;
+
+    [ObservableProperty]
+    private bool autoUpdate;
+
+    [ObservableProperty]
+    private bool autoBackup;
+
+    private readonly AppSettingsDbContext appSettingsDbContext;
+
+    partial void OnAutoUpdateChanged(bool value)
     {
-        private bool canApply;
-        private bool autoUpdate;
-        private bool autoBackup;
-        //private int backupCount; //Future
-
-
-        public bool AutoUpdate
-        {
-            get => autoUpdate;
-            set
-            {
-                Set(() => AutoUpdate, ref autoUpdate, value);
-                Set(() => CanApply, ref canApply, true);
-            }
-        }
-
-        public bool AutoBackup
-        {
-            get => autoBackup;
-            set
-            {
-                Set(() => AutoBackup, ref autoBackup, value);
-                Set(() => CanApply, ref canApply, true);
-            }
-        }
-
-        //Future
-        /*public int BackupCount
-        {
-            get => backupCount;
-            set
-            {
-                Set(() => BackupCount, ref backupCount, value);
-                Set(() => CanApply, ref canApply, true);
-            }
-        }*/
-
-        public bool CanApply => canApply;
-
-        public RelayCommand<Window> AcceptCommand { get; }
-        public RelayCommand ApplyCommand { get; }
-        public RelayCommand<Window> CancelCommand { get; }
-
-        public PreferencesWindowViewModel()
-        {
-            AcceptCommand = new RelayCommand<Window>(Accept);
-            ApplyCommand = new RelayCommand(Apply);
-            CancelCommand = new RelayCommand<Window>(Cancel);
-
-            autoUpdate = Properties.Settings.Default.AutoUpdate;
-            autoBackup = Properties.Settings.Default.AutoBackup;
-        }
-
-        private void Accept(Window window)
-        {
-            Apply();
-            window.Close();
-        }
-
-        private void Apply()
-        {
-            Properties.Settings.Default.AutoUpdate = autoUpdate;
-            Properties.Settings.Default.AutoBackup = autoBackup;
-
-            Properties.Settings.Default.Save();
-            Set(() => CanApply, ref canApply, false);
-        }
-
-        private void Cancel(Window window)
-        {
-            window.Close();
-        }
+        CanApply = true;
+        OnPropertyChanged(nameof(CanApply));
     }
+
+    partial void OnAutoBackupChanged(bool value)
+    {
+        CanApply = true;
+        OnPropertyChanged(nameof(CanApply));
+    }
+
+    public IRelayCommand AcceptCommand => new RelayCommand<Window>(Accept);
+    public IRelayCommand ApplyCommand => new RelayCommand(Apply);
+    public IRelayCommand CancelCommand => new RelayCommand<Window>(Cancel);
+
+    public PreferencesWindowViewModel()
+    {
+        var settings = appSettingsDbContext.AppSettings.First();
+        autoUpdate = settings.AutoUpdate;
+        autoBackup = settings.AutoBackup;
+    }
+
+    private void Accept(Window window)
+    {
+        Apply();
+        window.Close();
+    }
+
+    private void Apply()
+    {
+        var settings = appSettingsDbContext.AppSettings.First();
+        settings.AutoUpdate = AutoUpdate;
+        settings.AutoBackup = AutoBackup;
+        appSettingsDbContext.AppSettings.Update(settings);
+        appSettingsDbContext.SaveChanges();
+        CanApply = true;
+        OnPropertyChanged(nameof(CanApply));
+    }
+
+    private static void Cancel(Window window) => window.Close();
 }

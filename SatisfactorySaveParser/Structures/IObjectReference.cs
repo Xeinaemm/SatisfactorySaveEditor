@@ -1,10 +1,9 @@
-﻿namespace SatisfactorySaveParser.Structures
-{
-    public interface IObjectReference
-    {
-        string LevelName { get; set; }
-        string PathName { get; set; }
+﻿namespace SatisfactorySaveParser.Structures;
 
-        SaveObject ReferencedObject { get; set; }
-    }
+public interface IObjectReference
+{
+    string LevelName { get; set; }
+    string PathName { get; set; }
+
+    SaveObject ReferencedObject { get; set; }
 }

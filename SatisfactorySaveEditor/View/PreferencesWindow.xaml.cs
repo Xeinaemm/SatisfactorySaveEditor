@@ -1,15 +1,13 @@
-﻿using System.Windows;
+﻿using SatisfactorySaveEditor.ViewModel;
+using System.Windows;
 
-namespace SatisfactorySaveEditor.View
+namespace SatisfactorySaveEditor.View;
+
+public partial class PreferencesWindow : Window
 {
-    /// <summary>
-    /// Interakční logika pro PreferencesWindow.xaml
-    /// </summary>
-    public partial class PreferencesWindow : Window
+    public PreferencesWindow(PreferencesWindowViewModel vm)
     {
-        public PreferencesWindow()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+        DataContext = vm;
     }
 }

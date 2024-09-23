@@ -1,37 +1,32 @@
-﻿using SatisfactorySaveEditor.ViewModel.Struct;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SatisfactorySaveEditor.ViewModel.Struct;
 using SatisfactorySaveParser.PropertyTypes;
 using SatisfactorySaveParser.PropertyTypes.Structs;
 
-namespace SatisfactorySaveEditor.ViewModel.Property
+namespace SatisfactorySaveEditor.ViewModel.Property;
+
+public partial class StructPropertyViewModel : SerializedPropertyViewModel
 {
-    public class StructPropertyViewModel : SerializedPropertyViewModel
+    private readonly StructProperty model;
+
+    [ObservableProperty]
+    private object structData;
+
+    public string Type => model.Type;
+
+    public override string ShortName => $"Struct ({Type})";
+
+    public StructPropertyViewModel(StructProperty structProperty) : base(structProperty)
     {
-        private readonly StructProperty model;
+        model = structProperty;
+        structData = model.Data is DynamicStructData dsd ? new DynamicStructDataViewModel(dsd) : (object)model.Data;
+    }
 
-        private object structData; // TODO: Rest of the owl, implement view models for structs
-
-        public string Type => model.Type;
-
-        public object StructData
-        {
-            get => structData;
-            set { Set(() => StructData, ref structData, value); }
-        }
-
-        public override string ShortName => $"Struct ({Type})";
-
-        public StructPropertyViewModel(StructProperty structProperty) : base(structProperty)
-        {
-            model = structProperty;
-
-            if (model.Data is DynamicStructData dsd) structData = new DynamicStructDataViewModel(dsd);
-            else structData = model.Data;
-        }
-
-        public override void ApplyChanges()
-        {
-            if (structData is DynamicStructDataViewModel dsdvm) dsdvm.ApplyChanges();
-            else model.Data = (IStructData) structData;
-        }
+    public override void ApplyChanges()
+    {
+        if (StructData is DynamicStructDataViewModel dsdvm)
+            dsdvm.ApplyChanges();
+        else
+            model.Data = (IStructData)StructData;
     }
 }

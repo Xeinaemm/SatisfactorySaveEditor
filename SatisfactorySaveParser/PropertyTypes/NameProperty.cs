@@ -1,46 +1,37 @@
 ﻿using System.Diagnostics;
-using System.IO;
 
-namespace SatisfactorySaveParser.PropertyTypes
+namespace SatisfactorySaveParser.PropertyTypes;
+
+public class NameProperty(string propertyName, int index = 0) : SerializedProperty(propertyName, index)
 {
-    public class NameProperty : SerializedProperty
+    public const string TypeName = nameof(NameProperty);
+    public override string PropertyType => TypeName;
+    public override int SerializedLength => Value.GetSerializedLength();
+
+    public string Value { get; set; }
+
+    public override string ToString() => $"name: {Value}";
+
+    public override void Serialize(BinaryWriter writer, int buildVersion, bool writeHeader = true)
     {
-        public const string TypeName = nameof(NameProperty);
-        public override string PropertyType => TypeName;
-        public override int SerializedLength => Value.GetSerializedLength();
+        base.Serialize(writer, buildVersion, writeHeader);
 
-        public string Value { get; set; }
+        writer.Write(SerializedLength);
+        writer.Write(Index);
+        writer.Write((byte)0);
 
-        public NameProperty(string propertyName, int index = 0) : base(propertyName, index)
-        {
-        }
+        writer.WriteLengthPrefixedString(Value);
+    }
 
-        public override string ToString()
-        {
-            return $"name: {Value}";
-        }
+    public static NameProperty Parse(string propertyName, int index, BinaryReader reader)
+    {
+        var result = new NameProperty(propertyName, index);
 
-        public override void Serialize(BinaryWriter writer, int buildVersion, bool writeHeader = true)
-        {
-            base.Serialize(writer, buildVersion, writeHeader);
+        var unk3 = reader.ReadByte();
+        Trace.Assert(unk3 == 0);
 
-            writer.Write(SerializedLength);
-            writer.Write(Index);
-            writer.Write((byte)0);
+        result.Value = reader.ReadLengthPrefixedString();
 
-            writer.WriteLengthPrefixedString(Value);
-        }
-
-        public static NameProperty Parse(string propertyName, int index, BinaryReader reader)
-        {
-            var result = new NameProperty(propertyName, index);
-
-            var unk3 = reader.ReadByte();
-            Trace.Assert(unk3 == 0);
-
-            result.Value = reader.ReadLengthPrefixedString();
-
-            return result;
-        }
+        return result;
     }
 }

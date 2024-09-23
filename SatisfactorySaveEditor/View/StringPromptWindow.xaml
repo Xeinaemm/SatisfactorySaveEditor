@@ -4,11 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:util="clr-namespace:SatisfactorySaveEditor.Util"
-        x:Class="SatisfactorySaveEditor.View.StringPromptWindow"
+        xmlns:viewmodel="clr-namespace:SatisfactorySaveEditor.ViewModel"
+        d:DataContext="{d:DesignInstance Type=viewmodel:StringPromptViewModel}"
         mc:Ignorable="d"
+        x:Class="SatisfactorySaveEditor.View.StringPromptWindow"
         x:Name="StringPromptValueWindow"
         WindowStartupLocation="CenterOwner"
-        DataContext="{Binding StringPromptViewModel, Source={StaticResource Locator}, Mode=OneTime}"
         Title="{Binding WindowTitle}" Height="171.915" Width="400" ResizeMode="NoResize">
     <DockPanel Margin="5">
         <Grid DockPanel.Dock="Top">

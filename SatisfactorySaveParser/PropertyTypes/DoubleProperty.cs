@@ -1,45 +1,36 @@
 ﻿using System.Diagnostics;
-using System.IO;
 
-namespace SatisfactorySaveParser.PropertyTypes
+namespace SatisfactorySaveParser.PropertyTypes;
+
+public class DoubleProperty(string propertyName, int index = 0) : SerializedProperty(propertyName, index)
 {
-    public class DoubleProperty : SerializedProperty
+    public const string TypeName = nameof(DoubleProperty);
+    public override string PropertyType => TypeName;
+    public override int SerializedLength => 4;
+    public double Value { get; set; }
+
+    public override string ToString() => $"double: {Value}";
+
+    public override void Serialize(BinaryWriter writer, int buildVersion, bool writeHeader = true)
     {
-        public const string TypeName = nameof(DoubleProperty);
-        public override string PropertyType => TypeName;
-        public override int SerializedLength => 4;
-        public double Value { get; set; }
+        base.Serialize(writer, buildVersion, writeHeader);
 
-        public DoubleProperty(string propertyName, int index = 0) : base(propertyName, index)
-        {
-        }
+        writer.Write(SerializedLength);
+        writer.Write(Index);
 
-        public override string ToString()
-        {
-            return $"double: {Value}";
-        }
+        writer.Write((byte)0);
+        writer.Write(Value);
+    }
 
-        public override void Serialize(BinaryWriter writer, int buildVersion, bool writeHeader = true)
-        {
-            base.Serialize(writer, buildVersion, writeHeader);
+    public static DoubleProperty Parse(string propertyName, int index, BinaryReader reader)
+    {
+        var result = new DoubleProperty(propertyName, index);
 
-            writer.Write(SerializedLength);
-            writer.Write(Index);
+        var unk3 = reader.ReadByte();
+        Trace.Assert(unk3 == 0);
 
-            writer.Write((byte)0);
-            writer.Write(Value);
-        }
+        result.Value = reader.ReadDouble();
 
-        public static DoubleProperty Parse(string propertyName, int index, BinaryReader reader)
-        {
-            var result = new DoubleProperty(propertyName, index);
-
-            var unk3 = reader.ReadByte();
-            Trace.Assert(unk3 == 0);
-
-            result.Value = reader.ReadDouble();
-
-            return result;
-        }
+        return result;
     }
 }

@@ -10,18 +10,18 @@ Function CommandExists
 
 if(CommandExists strings)
 {
-	if([System.IO.File]::Exists(".\FactoryGame-WindowsNoEditor.pak"))
+	if([System.IO.File]::Exists(".\FactoryGame-Windows.pak"))
 	{
 		#command that does not save to file, instead printing it to the console
-		#strings -n 30 .\FactoryGame-WindowsNoEditor.pak | Select-String -Pattern "^BlueprintGeneratedClass'/Game/FactoryGame/Schematics" | % { "$_".replace("BlueprintGeneratedClass'", "") } | % { "$_".replace("'", "")}
+		#strings -n 30 .\FactoryGame-Windows.pak | Select-String -Pattern "^BlueprintGeneratedClass'/Game/FactoryGame/Schematics" | % { "$_".replace("BlueprintGeneratedClass'", "") } | % { "$_".replace("'", "")}
 
-		strings -n 30 .\FactoryGame-WindowsNoEditor.pak | Select-String -Pattern "^BlueprintGeneratedClass'/Game/FactoryGame/Buildable/Factory" | % { "$_".replace("BlueprintGeneratedClass'", "") } | % { "$_".replace("'", "")} | Tee-Object -FilePath .\Buildables.txt
+		strings -n 30 .\FactoryGame-Windows.pak | Select-String -Pattern "^BlueprintGeneratedClass'/Game/FactoryGame/Buildable/Factory" | ForEach-Object { "$_".replace("BlueprintGeneratedClass'", "") } | ForEach-Object { "$_".replace("'", "")} | Tee-Object -FilePath .\Buildables.txt
 		[console]::beep(500,125)
 		"Done."
 	}
 	else
 	{
-		Write-Host "Couldn't find FactoryGame-WindowsNoEditor.pak\nAre you sure you copied this script into your \SatisfactoryEarlyAccess\FactoryGame\Content\Paks folder?" -ForegroundColor Red
+		Write-Host "Couldn't find FactoryGame-Windows.pak\nAre you sure you copied this script into your \SatisfactoryEarlyAccess\FactoryGame\Content\Paks folder?" -ForegroundColor Red
 	}
 }
 else

@@ -1,13 +1,6 @@
-﻿using System.IO;
+﻿namespace SatisfactorySaveParser.PropertyTypes.Structs;
 
-namespace SatisfactorySaveParser.PropertyTypes.Structs
+public class Rotator(BinaryReader reader) : Vector(reader)
 {
-    public class Rotator : Vector
-    {
-        public new string Type => "Rotator";
-
-        public Rotator(BinaryReader reader) : base(reader)
-        {
-        }
-    }
+    public new static string Type => "Rotator";
 }

@@ -3,16 +3,15 @@ using SatisfactorySaveEditor.Model;
 
 using SatisfactorySaveParser;
 
-namespace SatisfactorySaveEditor.Cheats
-{
-    public class RestoreSlugsCheat : ICheat
-    {
-        public string Name => "Restore slugs";
+namespace SatisfactorySaveEditor.Cheats;
 
-        public bool Apply(SaveObjectModel rootItem, SatisfactorySave saveGame)
-        {
-            saveGame.CollectedObjects.RemoveAll(x => x.PathName.Contains("PersistentLevel.BP_Crystal"));
-            return true;
-        }
+public class RestoreSlugsCheat : ICheat
+{
+    public string Name => "Restore slugs";
+
+    public bool Apply(SaveObjectModel rootItem, SatisfactorySave saveGame)
+    {
+        saveGame.CollectedObjects.RemoveAll(x => x.PathName.Contains("PersistentLevel.BP_Crystal"));
+        return true;
     }
 }

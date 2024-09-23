@@ -1,24 +1,14 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows.Data;
-using SatisfactorySaveEditor.ViewModel;
 using SatisfactorySaveEditor.ViewModel.Property;
 
-namespace SatisfactorySaveEditor.Converter
+namespace SatisfactorySaveEditor.Converter;
+
+public class SerializablePropertyToTypeStringConverter : IValueConverter
 {
-    public class SerializablePropertyToTypeStringConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is SerializedPropertyViewModel model)
-                return model.ShortName;
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => value is SerializedPropertyViewModel model
+            ? (object)model.ShortName
+            : throw new ArgumentException("Object is not a SerializedPropertyViewModel", nameof(value));
 
-            throw new ArgumentException("Object is not a SerializedPropertyViewModel", nameof(value));
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return null;
-        }
-    }
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
 }

@@ -1,15 +1,8 @@
-﻿using System;
-using SatisfactorySaveParser.Save;
+﻿using SatisfactorySaveParser.Save;
 
-namespace SatisfactorySaveParser.Exceptions
+namespace SatisfactorySaveParser.Exceptions;
+
+public class UnknownBuildVersionException(FSaveCustomVersion buildVersion) : Exception
 {
-    public class UnknownBuildVersionException : Exception
-    {
-        public FSaveCustomVersion BuildVersion { get; set; }
-
-        public UnknownBuildVersionException(FSaveCustomVersion buildVersion)
-        {
-            BuildVersion = buildVersion;
-        }
-    }
+    public FSaveCustomVersion BuildVersion { get; set; } = buildVersion;
 }

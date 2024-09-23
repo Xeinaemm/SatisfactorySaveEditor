@@ -1,31 +1,20 @@
-﻿using System.IO;
+﻿namespace SatisfactorySaveParser.PropertyTypes.Structs;
 
-namespace SatisfactorySaveParser.PropertyTypes.Structs
+public class Quat(BinaryReader reader) : IStructData
 {
-    public class Quat : IStructData
+    public float X { get; set; } = reader.ReadSingle();
+    public float Y { get; set; } = reader.ReadSingle();
+    public float Z { get; set; } = reader.ReadSingle();
+    public float W { get; set; } = reader.ReadSingle();
+
+    public int SerializedLength => 16;
+    public string Type => "Quat";
+
+    public void Serialize(BinaryWriter writer, int buildVersion)
     {
-        public float X { get; set; }
-        public float Y { get; set; }
-        public float Z { get; set; }
-        public float W { get; set; }
-
-        public int SerializedLength => 16;
-        public string Type => "Quat";
-
-        public Quat(BinaryReader reader)
-        {
-            X = reader.ReadSingle();
-            Y = reader.ReadSingle();
-            Z = reader.ReadSingle();
-            W = reader.ReadSingle();
-        }
-
-        public void Serialize(BinaryWriter writer, int buildVersion)
-        {
-            writer.Write(X);
-            writer.Write(Y);
-            writer.Write(Z);
-            writer.Write(W);
-        }
+        writer.Write(X);
+        writer.Write(Y);
+        writer.Write(Z);
+        writer.Write(W);
     }
 }

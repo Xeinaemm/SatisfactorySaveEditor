@@ -1,23 +1,12 @@
-﻿using System.IO;
+﻿using SatisfactorySaveParser.Structures;
 
-using SatisfactorySaveParser.Structures;
+namespace SatisfactorySaveParser.PropertyTypes.Structs;
 
-namespace SatisfactorySaveParser.PropertyTypes.Structs
+public class Vector4D(BinaryReader reader) : IStructData
 {
-    public class Vector4D : IStructData
-    {
-        public int SerializedLength => 16;
-        public string Type => "Vector4";
-        public Vector4 Data { get; set; }
+    public int SerializedLength => 16;
+    public string Type => "Vector4";
+    public Vector4 Data { get; set; } = reader.ReadVector4();
 
-        public Vector4D(BinaryReader reader)
-        {
-            Data = reader.ReadVector4();
-        }
-
-        public void Serialize(BinaryWriter writer, int buildVersion)
-        {
-            writer.Write(Data);
-        }
-    }
+    public void Serialize(BinaryWriter writer, int buildVersion) => writer.Write(Data);
 }

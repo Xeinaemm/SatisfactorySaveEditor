@@ -1,14 +1,10 @@
-﻿namespace SatisfactorySaveParser.Structures
-{
-    public class Vector3
-    {
-        public float X { get; set; }
-        public float Y { get; set; }
-        public float Z { get; set; }
+﻿namespace SatisfactorySaveParser.Structures;
 
-        public override string ToString()
-        {
-            return $"X: {X} Y: {Y} Z: {Z}";
-        }
-    }
+public class Vector3
+{
+    public float X { get; set; }
+    public float Y { get; set; }
+    public float Z { get; set; }
+
+    public override string ToString() => $"X: {X} Y: {Y} Z: {Z}";
 }

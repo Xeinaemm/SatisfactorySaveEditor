@@ -1,49 +1,30 @@
-﻿using System.Collections.Generic;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
-using System.Windows;
+﻿using System.Windows;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using SatisfactorySaveEditor.Model;
 
-namespace SatisfactorySaveEditor.ViewModel
+namespace SatisfactorySaveEditor.ViewModel;
+
+public partial class FillViewModel : ObservableObject
 {
-    public class FillViewModel : ViewModelBase
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanConfirm))]
+    private ResourceType selectedItem;
+
+    public bool IsConfirmed { get; set; }
+
+    public static List<ResourceType> ItemTypes => ResourceTypes.RESOURCES;
+
+    public IRelayCommand OkCommand => new RelayCommand<Window>(Confirmed);
+
+    public IRelayCommand CancelCommand => new RelayCommand<Window>(Cancelled);
+
+    private void Confirmed(Window window)
     {
-        private ResourceType selectedItem;
-        public ResourceType SelectedItem
-        {
-            get => selectedItem;
-            set
-            {
-                Set(() => SelectedItem, ref selectedItem, value);
-                RaisePropertyChanged(nameof(CanConfirm));
-            }
-        }
-
-        public bool IsConfirmed { get; set; }
-
-        public List<ResourceType> ItemTypes => ResourceTypes.RESOURCES;
-
-        public RelayCommand<Window> OkCommand => new RelayCommand<Window>(Confirmed);
-
-        public RelayCommand<Window> CancelCommand => new RelayCommand<Window>(Cancelled);
-
-        private void Confirmed(Window window)
-        {
-            IsConfirmed = true;
-            window?.Close();
-        }
-
-        private void Cancelled(Window window)
-        {
-            window?.Close();
-        }
-        public bool CanConfirm
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(SelectedItem.ItemPath)) return false;
-                return SelectedItem.Quantity > 0;
-            }
-        }
+        IsConfirmed = true;
+        window?.Close();
     }
+
+    private void Cancelled(Window window) => window?.Close();
+    public bool CanConfirm => !string.IsNullOrEmpty(SelectedItem.ItemPath) && SelectedItem.Quantity > 0;
 }

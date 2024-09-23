@@ -1,25 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
-namespace SatisfactorySaveEditor.Model
+namespace SatisfactorySaveEditor.Model;
+
+[Serializable]
+public struct TypeTooltip
 {
-    [Serializable]
-    public struct TypeTooltip
+    [XmlAttribute]
+    public string Type;
+
+    [XmlAttribute]
+    public string Tooltip;
+
+    [XmlElement("TypeTooltip")]
+    public List<TypeTooltip> ChildTypes;
+
+    public readonly void Flatten(List<TypeTooltip> output)
     {
-        [XmlAttribute]
-        public string Type;
-
-        [XmlAttribute]
-        public string Tooltip;
-
-        [XmlElement("TypeTooltip")]
-        public List<TypeTooltip> ChildTypes;
-
-        public void Flatten(List<TypeTooltip> output)
-        {
-            output.Add(this);
-            foreach (var childType in ChildTypes) childType.Flatten(output);
-        }
+        output.Add(this);
+        foreach (var childType in ChildTypes)
+            childType.Flatten(output);
     }
 }

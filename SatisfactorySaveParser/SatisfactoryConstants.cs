@@ -1,7 +1,6 @@
-﻿namespace SatisfactorySaveParser
+﻿namespace SatisfactorySaveParser;
+
+public static class SatisfactoryConstants
 {
-    public static class SatisfactoryConstants
-    {
-        
-    }
+    
 }

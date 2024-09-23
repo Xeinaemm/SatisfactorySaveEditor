@@ -1,37 +1,27 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using SatisfactorySaveParser.PropertyTypes;
 using System.Windows;
 
-namespace SatisfactorySaveEditor.ViewModel.Property
+namespace SatisfactorySaveEditor.ViewModel.Property;
+
+public abstract class SerializedPropertyViewModel(SerializedProperty serializedProperty) : ObservableObject
 {
-    public abstract class SerializedPropertyViewModel : ViewModelBase
-    {
-        public readonly SerializedProperty Model;
+    public readonly SerializedProperty Model = serializedProperty;
 
-        public string PropertyName => Model.PropertyName;
+    public string PropertyName => Model.PropertyName;
 
-        public RelayCommand CopyPropertyNameCommand { get; }
-        
-        /// <summary>
-        /// Gets or sets the index of this property in an array
-        /// Leave null for properties outside arrays
-        /// </summary>
-        public string Index { get; set; }
+    public IRelayCommand CopyPropertyNameCommand => new RelayCommand(CopyPropertyName);
 
-        public abstract string ShortName { get; }
+    /// <summary>
+    /// Gets or sets the index of this property in an array
+    /// Leave null for properties outside arrays
+    /// </summary>
+    public string Index { get; set; }
 
-        protected SerializedPropertyViewModel(SerializedProperty serializedProperty)
-        {
-            Model = serializedProperty;
-            CopyPropertyNameCommand = new RelayCommand(CopyPropertyName);
-        }
+    public abstract string ShortName { get; }
 
-        public abstract void ApplyChanges();
+    public abstract void ApplyChanges();
 
-        private void CopyPropertyName()
-        {
-            Clipboard.SetText(PropertyName);
-        }
-    }
+    private void CopyPropertyName() => Clipboard.SetText(PropertyName);
 }

@@ -2,9 +2,13 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:SatisfactorySaveEditor.Cheats"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="SatisfactorySaveEditor.Cheats.UnlockResearchWindow"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewmodel="clr-namespace:SatisfactorySaveEditor.ViewModel"
+        d:DataContext="{d:DesignInstance Type=viewmodel:UnlockResearchWindowViewModel}"
+        mc:Ignorable="d"
+        x:Class="SatisfactorySaveEditor.Cheats.UnlockResearchWindow"
         x:Name="UnlockResearchPickWindow"
-        DataContext="{Binding UnlockResearchWindowViewModel, Source={StaticResource Locator}, Mode=OneTime}"
         Title="Unlock Research" WindowStartupLocation="CenterScreen"
         Width="2000" Height="600">
     <Grid x:Name="grid" Margin="15">

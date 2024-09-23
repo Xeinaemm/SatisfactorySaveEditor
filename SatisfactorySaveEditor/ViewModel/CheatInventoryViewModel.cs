@@ -1,43 +1,25 @@
-﻿using System.Windows;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System.Windows;
 
-namespace SatisfactorySaveEditor.ViewModel
+namespace SatisfactorySaveEditor.ViewModel;
+
+public partial class CheatInventoryViewModel : ObservableObject
 {
-    public class CheatInventoryViewModel : ViewModelBase
+    public IRelayCommand OkCommand => new RelayCommand<Window>(Ok);
+    public IRelayCommand CancelCommand => new RelayCommand<Window>(Cancel);
+
+    [ObservableProperty]
+    private int numberChosen;
+
+    [ObservableProperty]
+    private int oldSlotsDisplay;
+
+    private void Cancel(Window obj)
     {
-        public RelayCommand<Window> OkCommand { get; }
-        public RelayCommand<Window> CancelCommand { get; }
-
-        private int numberChosen;
-        public int NumberChosen
-        {
-            get => numberChosen;
-            set { Set(() => NumberChosen, ref numberChosen, value); }
-        }
-
-        private int oldSlotsDisplay;
-        public int OldSlotsDisplay
-        {
-            get => oldSlotsDisplay;
-            set { Set(() => OldSlotsDisplay, ref oldSlotsDisplay, value); }
-        }
-
-        public CheatInventoryViewModel()
-        {
-            OkCommand = new RelayCommand<Window>(Ok);
-            CancelCommand = new RelayCommand<Window>(Cancel);
-        }
-
-        private void Cancel(Window obj)
-        {
-            NumberChosen = int.MinValue;
-            obj.Close();
-        }
-
-        private void Ok(Window obj)
-        {
-            obj.Close();
-        }
+        NumberChosen = int.MinValue;
+        obj.Close();
     }
+
+    private void Ok(Window obj) => obj.Close();
 }

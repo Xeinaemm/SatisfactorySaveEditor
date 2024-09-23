@@ -1,32 +1,21 @@
-﻿using System.IO;
+﻿namespace SatisfactorySaveParser.PropertyTypes.Structs;
 
-namespace SatisfactorySaveParser.PropertyTypes.Structs
+public class RailroadTrackPosition(BinaryReader reader) : IStructData
 {
-    public class RailroadTrackPosition : IStructData
+    public string Root { get; set; } = reader.ReadLengthPrefixedString();
+    public string InstanceName { get; set; } = reader.ReadLengthPrefixedString();
+    public float Offset { get; set; } = reader.ReadSingle();
+    public float Forward { get; set; } = reader.ReadSingle();
+
+
+    public int SerializedLength => Root.GetSerializedLength() + InstanceName.GetSerializedLength() + 8;
+    public string Type => "RailroadTrackPosition";
+
+    public void Serialize(BinaryWriter writer, int buildVersion)
     {
-        public string Root { get; set; }
-        public string InstanceName { get; set; }
-        public float Offset { get; set; }
-        public float Forward { get; set; }
-
-
-        public int SerializedLength => Root.GetSerializedLength() + InstanceName.GetSerializedLength() + 8;
-        public string Type => "RailroadTrackPosition";
-
-        public RailroadTrackPosition(BinaryReader reader)
-        {
-            Root = reader.ReadLengthPrefixedString();
-            InstanceName = reader.ReadLengthPrefixedString();
-            Offset = reader.ReadSingle();
-            Forward = reader.ReadSingle();
-        }
-
-        public void Serialize(BinaryWriter writer, int buildVersion)
-        {
-            writer.WriteLengthPrefixedString(Root);
-            writer.WriteLengthPrefixedString(InstanceName);
-            writer.Write(Offset);
-            writer.Write(Forward);
-        }
+        writer.WriteLengthPrefixedString(Root);
+        writer.WriteLengthPrefixedString(InstanceName);
+        writer.Write(Offset);
+        writer.Write(Forward);
     }
 }

@@ -1,68 +1,57 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq;
-using GalaSoft.MvvmLight.CommandWpf;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using SatisfactorySaveEditor.Util;
 using SatisfactorySaveParser.PropertyTypes;
+using System.Collections.ObjectModel;
 
-namespace SatisfactorySaveEditor.ViewModel.Property
+namespace SatisfactorySaveEditor.ViewModel.Property;
+
+public partial class ArrayPropertyViewModel : SerializedPropertyViewModel
 {
-    public class ArrayPropertyViewModel : SerializedPropertyViewModel
+    private readonly ArrayProperty model;
+
+    [ObservableProperty]
+    private bool isExpanded;
+
+    public IRelayCommand AddElementCommand => new RelayCommand(AddElement);
+    public IRelayCommand RemoveElementCommand => new RelayCommand<SerializedPropertyViewModel>(RemoveElement);
+
+    public ObservableCollection<SerializedPropertyViewModel> Elements { get; }
+
+    public string Type => model.Type;
+
+    public override string ShortName => $"Array ({AddViewModel.FromStringType(Type)})";
+
+    public ArrayPropertyViewModel(ArrayProperty arrayProperty) : base(arrayProperty)
     {
-        private readonly ArrayProperty model;
+        model = arrayProperty;
 
-        private bool isExpanded;
+        Elements = new ObservableCollection<SerializedPropertyViewModel>(arrayProperty.Elements.Select(PropertyViewModelMapper.Convert));
+        for (var i = 0; i < Elements.Count; i++)
+            Elements[i].Index = i.ToString();
 
-        public RelayCommand AddElementCommand { get; }
-        public RelayCommand<SerializedPropertyViewModel> RemoveElementCommand { get; }
+        IsExpanded = Elements.Count <= 3;
+    }
 
-        public ObservableCollection<SerializedPropertyViewModel> Elements { get; }
+    private void AddElement()
+    {
+        // TODO: Is copying the last PropertyName ok?
+        var property = AddViewModel.CreateProperty(AddViewModel.FromStringType(Type), Elements.Last().PropertyName);
+        var viewModel = PropertyViewModelMapper.Convert(property);
+        viewModel.Index = Elements.Count.ToString();
 
-        public string Type => model.Type;
+        Elements.Add(viewModel);
+    }
 
-        public bool IsExpanded
+    private void RemoveElement(SerializedPropertyViewModel property) => Elements.Remove(property);
+
+    public override void ApplyChanges()
+    {
+        model.Elements.Clear();
+        foreach (var element in Elements)
         {
-            get => isExpanded;
-            set { Set(() => IsExpanded, ref isExpanded, value); }
-        }
-
-        public override string ShortName => $"Array ({AddViewModel.FromStringType(Type)})";
-
-        public ArrayPropertyViewModel(ArrayProperty arrayProperty) : base(arrayProperty)
-        {
-            model = arrayProperty;
-
-            Elements = new ObservableCollection<SerializedPropertyViewModel>(arrayProperty.Elements.Select(PropertyViewModelMapper.Convert));
-            for (var i = 0; i < Elements.Count; i++) Elements[i].Index = i.ToString();
-
-            AddElementCommand = new RelayCommand(AddElement);
-            RemoveElementCommand = new RelayCommand<SerializedPropertyViewModel>(RemoveElement);
-
-            IsExpanded = Elements.Count <= 3;
-        }
-
-        private void AddElement()
-        {
-            // TODO: Is copying the last PropertyName ok?
-            var property = AddViewModel.CreateProperty(AddViewModel.FromStringType(Type), Elements.Last().PropertyName);
-            var viewModel = PropertyViewModelMapper.Convert(property);
-            viewModel.Index = Elements.Count.ToString();
-
-            Elements.Add(viewModel);
-        }
-
-        private void RemoveElement(SerializedPropertyViewModel property)
-        {
-            Elements.Remove(property);
-        }
-
-        public override void ApplyChanges()
-        {
-            model.Elements.Clear();
-            foreach (var element in Elements)
-            {
-                element.ApplyChanges();
-                model.Elements.Add(element.Model);
-            }
+            element.ApplyChanges();
+            model.Elements.Add(element.Model);
         }
     }
 }

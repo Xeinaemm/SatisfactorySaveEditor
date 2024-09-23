@@ -1,16 +1,15 @@
 ﻿using System.Windows;
 
-namespace SatisfactorySaveEditor.View
+namespace SatisfactorySaveEditor.View;
+
+/// <summary>
+/// Interaction logic for StringPromptWindow.xaml
+/// </summary>
+public partial class StringPromptWindow : Window
 {
-    /// <summary>
-    /// Interaction logic for StringPromptWindow.xaml
-    /// </summary>
-    public partial class StringPromptWindow : Window
+    public StringPromptWindow()
     {
-        public StringPromptWindow()
-        {
-            InitializeComponent();
-            StringBox.Focus();
-        }
+        InitializeComponent();
+        StringBox.Focus();
     }
 }

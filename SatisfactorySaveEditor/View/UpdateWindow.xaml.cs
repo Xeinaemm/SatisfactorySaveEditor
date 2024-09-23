@@ -1,15 +1,7 @@
 ﻿using System.Windows;
 
-namespace SatisfactorySaveEditor.View
+namespace SatisfactorySaveEditor.View;
+public partial class UpdateWindow : Window
 {
-    /// <summary>
-    /// Interakční logika pro UpdateWindow.xaml
-    /// </summary>
-    public partial class UpdateWindow : Window
-    {
-        public UpdateWindow()
-        {
-            InitializeComponent();
-        }
-    }
+    public UpdateWindow() => InitializeComponent();
 }

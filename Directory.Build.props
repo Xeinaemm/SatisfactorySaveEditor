@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  
+  <PropertyGroup>
+    <Company>Xeinaemm Consulting Piotr Czech</Company>
+    <Authors>$(Company)</Authors>
+    <Copyright>Copyright © $(Company) $([System.DateTime]::Now.Year)</Copyright>
+    <Trademark>$(Company)™</Trademark>
+    <Product>$(Company) Projects</Product>
+  </PropertyGroup>
+
+  <PropertyGroup Label="ProjectsSetup">
+    <NoWarn>1591;1701;1702;8032;NU1701;AD0001;NU5128</NoWarn>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Deterministic>true</Deterministic>
+    <RestoreIgnoreFailedSource>true</RestoreIgnoreFailedSource>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+</Project>

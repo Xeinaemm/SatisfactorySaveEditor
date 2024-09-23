@@ -1,20 +1,12 @@
 ﻿using SatisfactorySaveParser.PropertyTypes;
 
-namespace SatisfactorySaveEditor.ViewModel.Property
+namespace SatisfactorySaveEditor.ViewModel.Property;
+
+public class MapPropertyViewModel(MapProperty mapProperty) : SerializedPropertyViewModel(mapProperty)
 {
-    public class MapPropertyViewModel : SerializedPropertyViewModel
+    public override string ShortName => "Map";
+
+    public override void ApplyChanges()
     {
-        private readonly MapProperty model;
-
-        public override string ShortName => "Map";
-
-        public MapPropertyViewModel(MapProperty mapProperty) : base(mapProperty)
-        {
-            model = mapProperty;
-        }
-
-        public override void ApplyChanges()
-        {
-        }
     }
 }
