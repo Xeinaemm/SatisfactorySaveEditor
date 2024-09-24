@@ -37,7 +37,7 @@ public partial class App : Application
             options => options.UseSqlite(cfg.GetConnectionString("database")))
         .AddLogging(logging => logging.AddSerilog())
         .AddSingleton<MainWindow>()
-        .AddTransient<MainViewModel>()
+        .AddSingleton<MainViewModel>()
         .AddSingleton<AddWindow>()
         .AddTransient<AddViewModel>()
         .AddSingleton<CheatInventoryWindow>()

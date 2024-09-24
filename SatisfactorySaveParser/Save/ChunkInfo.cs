@@ -2,7 +2,7 @@
 
 public class ChunkInfo
 {
-    public const long Magic = 0x9E2A83C1;
+    public const long Magic = 0xC1832A9E;
     public const int ChunkSize = 131072; // 128 KiB
 
     public long CompressedSize { get; set; }

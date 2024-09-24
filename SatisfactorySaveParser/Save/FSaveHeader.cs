@@ -65,30 +65,28 @@ public class FSaveHeader
     /// </summary>
     public bool IsModdedSave { get; set; }
 
+    /// <summary>
+    ///     Header data unable to parse before magic hex
+    /// </summary>
+    public byte[] PreMagicHexDumpedBytes { get; set; }
+
     public void Serialize(BinaryWriter writer)
     {
+        if (HeaderVersion != SaveHeaderVersion.SupportedVersion)
+            throw new UnsupportedSaveVersionException(HeaderVersion);
+
         writer.Write((int)HeaderVersion);
         writer.Write((int)SaveVersion);
         writer.Write(BuildVersion);
-
         writer.WriteLengthPrefixedString(MapName);
         writer.WriteLengthPrefixedString(MapOptions);
         writer.WriteLengthPrefixedString(SessionName);
-
         writer.Write(PlayDuration);
         writer.Write(SaveDateTime);
-
-        if (HeaderVersion >= SaveHeaderVersion.AddedSessionVisibility)
-            writer.Write((byte)SessionVisibility);
-
-        if (HeaderVersion >= SaveHeaderVersion.UE425EngineUpdate)
-            writer.Write(EditorObjectVersion);
-
-        if (HeaderVersion >= SaveHeaderVersion.AddedModdingParams)
-        {
-            writer.WriteLengthPrefixedString(ModMetadata);
-            writer.Write(IsModdedSave ? 1 : 0);
-        }
+        writer.Write((byte)SessionVisibility);
+        writer.Write(EditorObjectVersion);
+        writer.WriteLengthPrefixedString(ModMetadata);
+        writer.Write(IsModdedSave ? 1 : 0);
     }
 
     public static FSaveHeader Parse(BinaryReader reader)
@@ -104,36 +102,43 @@ public class FSaveHeader
             SessionName = reader.ReadLengthPrefixedString(),
 
             PlayDuration = reader.ReadInt32(),
-            SaveDateTime = reader.ReadInt64()
+            SaveDateTime = reader.ReadInt64(),
+            SessionVisibility = (ESessionVisibility)reader.ReadByte(),
+            EditorObjectVersion = reader.ReadInt32(),
+            ModMetadata = reader.ReadLengthPrefixedString(),
+            IsModdedSave = reader.ReadInt32() > 0,
+            PreMagicHexDumpedBytes = reader.ReadBytes(16 + 16 + 16 + 7), // dumped data
         };
 
-        Log.Debug($"Read save header: HeaderVersion={header.HeaderVersion}, SaveVersion={(int)header.SaveVersion}, BuildVersion={header.BuildVersion}, MapName={header.MapName}, MapOpts={header.MapOptions}, Session={header.SessionName}, PlayTime={header.PlayDuration}, SaveTime={header.SaveDateTime}");
+        Log.Debug($"Read save header: \n" +
+            $"HeaderVersion={header.HeaderVersion} \n" +
+            $"SaveVersion={(int)header.SaveVersion} \n" +
+            $"BuildVersion={header.BuildVersion} \n" +
+            $"MapName={header.MapName} \n" +
+            $"MapOpts={header.MapOptions} \n" +
+            $"Session={header.SessionName} \n" +
+            $"PlayTime={header.PlayDuration} \n" +
+            $"SaveTime={header.SaveDateTime} \n" +
+            $"SessionVisibility={header.SessionVisibility} \n" +
+            $"EditorObjectVersion={header.EditorObjectVersion} \n" +
+            $"ModMetadata={header.ModMetadata} \n" +
+            $"IsModdedSave={header.IsModdedSave} \n" +
+            $"PreMagicHexDumpedBytes={Convert.ToHexString(header.PreMagicHexDumpedBytes)} \n");
 
-        if (header.HeaderVersion > SaveHeaderVersion.LatestVersion)
-            throw new UnknownSaveVersionException(header.HeaderVersion);
+        if (header.HeaderVersion != SaveHeaderVersion.SupportedVersion)
+            throw new UnsupportedSaveVersionException(header.HeaderVersion);
 
-        if (header.SaveVersion is < FSaveCustomVersion.DROPPED_WireSpanFromConnnectionComponents or > FSaveCustomVersion.LatestVersion)
-            throw new UnknownBuildVersionException(header.SaveVersion);
-
-        if (header.HeaderVersion >= SaveHeaderVersion.AddedSessionVisibility)
-        {
-            header.SessionVisibility = (ESessionVisibility)reader.ReadByte();
-            Log.Debug($"SessionVisibility={header.SessionVisibility}");
-        }
-
-        if (header.HeaderVersion >= SaveHeaderVersion.UE425EngineUpdate)
-        {
-            header.EditorObjectVersion = reader.ReadInt32();
-            Log.Debug($"EditorObjectVersion={header.EditorObjectVersion}");
-        }
-
-        if (header.HeaderVersion >= SaveHeaderVersion.AddedModdingParams)
-        {
-            header.ModMetadata = reader.ReadLengthPrefixedString();
-            header.IsModdedSave = reader.ReadInt32() > 0;
-            Log.Debug($"ModMetadata={header.ModMetadata}, IsModdedSave={header.IsModdedSave}");
-        }
+        if (header.SaveVersion != FSaveCustomVersion.SupportedVersion)
+            throw new UnsupportedBuildVersionException(header.SaveVersion);
 
         return header;
+    }
+
+    public static void DumpData(BinaryReader reader)
+    {
+        var magicHex = Convert.ToInt64(Convert.ToHexString(reader.ReadBytes(4)), 16);
+        if (magicHex != ChunkInfo.Magic)
+            throw new Exception("Save file header mismatch. Unable to open save file.");
+        reader.ReadBytes(16 + 16 + 13); // dumped data, next 2 bytes should be 78 9C (zlib header)
     }
 }

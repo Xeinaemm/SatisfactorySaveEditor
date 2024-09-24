@@ -32,8 +32,6 @@ public partial class SaveRootModel : SaveObjectModel
 
     public FSaveCustomVersion SaveVersion => model.SaveVersion;
 
-    public bool HasSessionVisibility => HeaderVersion >= SaveHeaderVersion.AddedSessionVisibility;
-
     public SaveRootModel(FSaveHeader header) : base(header.SessionName)
     {
         model = header;

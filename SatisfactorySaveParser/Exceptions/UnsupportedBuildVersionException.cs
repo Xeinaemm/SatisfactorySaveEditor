@@ -2,7 +2,7 @@
 
 namespace SatisfactorySaveParser.Exceptions;
 
-public class UnknownBuildVersionException(FSaveCustomVersion buildVersion) : Exception
+public class UnsupportedBuildVersionException(FSaveCustomVersion buildVersion) : Exception
 {
     public FSaveCustomVersion BuildVersion { get; set; } = buildVersion;
 }

@@ -98,12 +98,6 @@ public static class BinaryIOExtensions
         writer.Write(vec.W);
     }
 
-    public static ChunkInfo ReadChunkInfo(this BinaryReader reader) => new()
-    {
-        CompressedSize = reader.ReadInt64(),
-        UncompressedSize = reader.ReadInt64()
-    };
-
     public static void Write(this BinaryWriter writer, ChunkInfo info)
     {
         writer.Write(info.CompressedSize);
